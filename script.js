@@ -154,3 +154,72 @@ function updateTotals(){
     document.getElementById("grandTotal").textContent = grandTotal;
 
 }
+// =============================
+// حفظ البيانات
+// =============================
+
+function saveData(){
+
+    let data = [];
+
+    tbody.querySelectorAll("tr").forEach(row=>{
+
+        data.push({
+
+            customer : row.querySelector(".customer").value,
+
+            purchase : row.querySelector(".purchase").value,
+
+            box : row.querySelector(".box").value,
+
+            safe : row.querySelector(".safe").value,
+
+            reserve : row.querySelector(".reserve").value,
+
+            note : row.querySelector(".note").value
+
+        });
+
+    });
+
+    localStorage.setItem("payments",JSON.stringify(data));
+
+    localStorage.setItem("date",document.getElementById("today").value);
+
+}
+// =============================
+// استرجاع البيانات
+// =============================
+
+function loadData(){
+
+    let savedDate = localStorage.getItem("date");
+
+    if(savedDate){
+
+        document.getElementById("today").value = savedDate;
+
+    }
+
+    let data = JSON.parse(localStorage.getItem("payments") || "[]");
+
+    data.forEach(item=>{
+
+        addRow();
+
+        let row = tbody.lastElementChild;
+
+        row.querySelector(".customer").value = item.customer;
+        row.querySelector(".purchase").value = item.purchase;
+        row.querySelector(".box").value = item.box;
+        row.querySelector(".safe").value = item.safe;
+        row.querySelector(".reserve").value = item.reserve;
+        row.querySelector(".note").value = item.note;
+
+        calculateRow(row);
+
+    });
+
+}
+loadData();
+document.getElementById("today").addEventListener("change",saveData);
