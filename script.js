@@ -84,3 +84,73 @@ tbody.addEventListener("click",function(e){
     }
 
 });
+tbody.addEventListener("input", function(e){
+
+    if(
+        e.target.classList.contains("purchase") ||
+        e.target.classList.contains("box") ||
+        e.target.classList.contains("safe") ||
+        e.target.classList.contains("reserve")
+    ){
+        calculateRow(e.target.closest("tr"));
+    }
+
+});
+function calculateRow(row){
+
+    let purchase = Number(row.querySelector(".purchase").value) || 0;
+    let box = Number(row.querySelector(".box").value) || 0;
+    let safe = Number(row.querySelector(".safe").value) || 0;
+    let reserve = Number(row.querySelector(".reserve").value) || 0;
+
+    let totalPaid = box + safe + reserve;
+    let diff = totalPaid - purchase;
+
+    row.querySelector(".total").textContent = totalPaid;
+    row.querySelector(".difference").textContent = diff;
+
+    let statusCell = row.querySelector(".status");
+
+    statusCell.className = "status";
+
+    if(diff === 0){
+        statusCell.textContent = "✔ متطابق";
+        statusCell.classList.add("ok");
+    }
+    else if(diff < 0){
+        statusCell.textContent = "❌ ناقص " + Math.abs(diff);
+        statusCell.classList.add("less");
+    }
+    else{
+        statusCell.textContent = "⚠ زيادة " + diff;
+        statusCell.classList.add("more");
+    }
+
+    updateTotals();
+    saveData();
+}
+function updateTotals(){
+
+    let purchaseTotal = 0;
+    let boxTotal = 0;
+    let safeTotal = 0;
+    let reserveTotal = 0;
+    let grandTotal = 0;
+
+    tbody.querySelectorAll("tr").forEach(row=>{
+
+        purchaseTotal += Number(row.querySelector(".purchase").value) || 0;
+        boxTotal += Number(row.querySelector(".box").value) || 0;
+        safeTotal += Number(row.querySelector(".safe").value) || 0;
+        reserveTotal += Number(row.querySelector(".reserve").value) || 0;
+        grandTotal += Number(row.querySelector(".total").textContent) || 0;
+
+    });
+
+    document.getElementById("totalPurchases").textContent = purchaseTotal;
+    document.getElementById("totalBox").textContent = boxTotal;
+    document.getElementById("totalSafe").textContent = safeTotal;
+    document.getElementById("totalReserve").textContent = reserveTotal;
+    document.getElementById("grandTotal").textContent = grandTotal;
+
+}
